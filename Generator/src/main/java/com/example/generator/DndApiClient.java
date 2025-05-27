@@ -32,12 +32,12 @@ public class DndApiClient {
                         .collect(Collectors.toList()))
                 .block();
     }
-    public List<String>getStartingEquipment(String characterClass)
+    /*public List<String>getStartingEquipment(String characterClass)
     {
-        /*return webClient.get()
+        return webClient.get()
                 .uri("classes/{characterClass}", characterClass)
                 .retrieve()
                 .bodyToMono(JsonNode.class)
-                .map()*/
-    }
+                .map()
+    }*/
 }
