@@ -33,7 +33,7 @@ public class CharacterService {
         characterJson.setClassFeatures(apiClient.getClassFeatures(characterClass,level));
         int baseHP = 6 +(level-1)*(6+modifier(stats.get("CON")));
         characterJson.setHitPoints(baseHP);
-        characterJson.setSpellsKnown(List.of());
+        characterJson.setSpellsKnown(apiClient.getSpellsByClassAndLevel(characterClass,level));
         characterJson.setEquipment(List.of("Backpack","Bedroll"));
         return characterJson;
     }

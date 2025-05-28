@@ -32,6 +32,21 @@ public class DndApiClient {
                         .collect(Collectors.toList()))
                 .block();
     }
+    public List<String>getSpellsByClassAndLevel(String characterClass, int level)
+    {
+        return webClient.get()
+                        .uri("classes/{characterClass}/levels/{level}/spells",characterClass.toLowerCase(),level)
+                        .retrieve()
+                        .bodyToMono(JsonNode.class)
+                        .map(json->{
+                            JsonNode results = json.get("results");
+                            if(results == null||!results.isArray()) return List.<String>of();
+                            return StreamSupport.stream(results.spliterator(),false)
+                                    .map(node->node.get("name").asText())
+                                    .collect(Collectors.toList());
+                        })
+                        .block();
+    }
     /*public List<String>getStartingEquipment(String characterClass)
     {
         return webClient.get()
@@ -40,4 +55,5 @@ public class DndApiClient {
                 .bodyToMono(JsonNode.class)
                 .map()
     }*/
+
 }
