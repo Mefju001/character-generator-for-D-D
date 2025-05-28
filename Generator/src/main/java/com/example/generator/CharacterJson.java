@@ -10,7 +10,7 @@ public class CharacterJson {
     private Map<String,Integer>stats;
     private List<String> racialTraits;
     private List<String>classFeatures;
-    private List<String> spellsKnown;
+    private List<Spell> spellsKnown;
     private List<String> equipment;
     private int hitPoints;
 
@@ -70,11 +70,11 @@ public class CharacterJson {
         this.classFeatures = classFeatures;
     }
 
-    public List<String> getSpellsKnown() {
+    public List<Spell> getSpellsKnown() {
         return spellsKnown;
     }
 
-    public void setSpellsKnown(List<String> spellsKnown) {
+    public void setSpellsKnown(List<Spell> spellsKnown) {
         this.spellsKnown = spellsKnown;
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -32,20 +33,36 @@ public class DndApiClient {
                         .collect(Collectors.toList()))
                 .block();
     }
-    public List<String>getSpellsByClassAndLevel(String characterClass, int level)
+    public List<Spell>getSpellsByClassAndLevel(String characterClass, int level)
     {
-        return webClient.get()
+         JsonNode json = webClient.get()
                         .uri("classes/{characterClass}/levels/{level}/spells",characterClass.toLowerCase(),level)
                         .retrieve()
                         .bodyToMono(JsonNode.class)
-                        .map(json->{
-                            JsonNode results = json.get("results");
-                            if(results == null||!results.isArray()) return List.<String>of();
-                            return StreamSupport.stream(results.spliterator(),false)
-                                    .map(node->node.get("name").asText())
-                                    .collect(Collectors.toList());
-                        })
                         .block();
+        if(json == null) return List.of();
+        JsonNode results = json.get("results");
+        if(results == null||!results.isArray()) return List.of();
+        List<Spell>spells = new ArrayList<>();
+        for(JsonNode node : results){
+            String spellIndex=node.get("index").asText();
+            JsonNode spellDetails = webClient.get()
+                    .uri("spells/{index}",spellIndex)
+                    .retrieve()
+                    .bodyToMono(JsonNode.class)
+                    .block();
+            if(spellDetails!=null) {
+                String name = spellDetails.get("name").asText();
+                int spellLevel = spellDetails.get("level").asInt();
+                String description = "";
+                JsonNode descNode = spellDetails.get("desc");
+                if (descNode != null && descNode.isArray() && !descNode.isEmpty()) {
+                    description = descNode.get(0).asText();
+                }
+                spells.add(new Spell(name, spellLevel, description));
+            }
+        }
+        return spells;
     }
     /*public List<String>getStartingEquipment(String characterClass)
     {
