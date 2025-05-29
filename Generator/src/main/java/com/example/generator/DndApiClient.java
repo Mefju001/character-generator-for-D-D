@@ -84,14 +84,32 @@ public class DndApiClient {
                     if(item!=null&&item.has("name")){
                         choices.add(item.get("name").asText());
                     } else {
-                        choices.add("Unknown item or unsupported format");
+                        JsonNode choiceNode = choice.get("choice");
+                        if(choiceNode!=null) {
+                            JsonNode from = choiceNode.get("from");
+                            if (from != null) {
+                                if (from.has("name")) {
+                                    choices.add(from.get("name").asText());
+                                } else if (from.has("equipment_category") && from.get("equipment_category").has("name")) {
+                                    choices.add(from.get("equipment_category").get("name").asText());
+                                }
+                            }
+                        }
                     }
 
                 }
                 proposed.add(new EquipmentOption(desc,choices));
             }
         }
-        List<EquipmentItem> selected = List.of();
+        List<EquipmentItem> selected = new ArrayList<>(List.of());
+        JsonNode items = json.path("starting_equipment");
+        if (items.isArray()) {
+            for (JsonNode entry : items) {
+                String name = entry.path("equipment").path("name").asText("Nieznany przedmiot");
+                int qty = entry.path("quantity").asInt(1);
+                selected.add(new EquipmentItem(name, qty));
+            }
+        }
         return new EquipmentData(proposed,selected);
     }
 }

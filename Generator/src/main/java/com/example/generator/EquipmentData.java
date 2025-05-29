@@ -3,6 +3,7 @@ package com.example.generator;
 import java.util.List;
 
 public class EquipmentData {
+
     private List<EquipmentOption> proposed;
     private List<EquipmentItem> selected;
 
