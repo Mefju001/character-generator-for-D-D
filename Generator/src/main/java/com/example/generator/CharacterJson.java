@@ -11,7 +11,7 @@ public class CharacterJson {
     private List<String> racialTraits;
     private List<String>classFeatures;
     private List<Spell> spellsKnown;
-    private List<String> equipment;
+    private EquipmentData equipment;
     private int hitPoints;
 
     public CharacterJson() {
@@ -78,11 +78,11 @@ public class CharacterJson {
         this.spellsKnown = spellsKnown;
     }
 
-    public List<String> getEquipment() {
+    public EquipmentData getEquipment() {
         return equipment;
     }
 
-    public void setEquipment(List<String> equipment) {
+    public void setEquipment(EquipmentData equipment) {
         this.equipment = equipment;
     }
 

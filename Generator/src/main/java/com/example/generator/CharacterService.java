@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class CharacterService {
@@ -34,7 +35,7 @@ public class CharacterService {
         int baseHP = 6 +(level-1)*(6+modifier(stats.get("CON")));
         characterJson.setHitPoints(baseHP);
         characterJson.setSpellsKnown(apiClient.getSpellsByClassAndLevel(characterClass,level));
-        characterJson.setEquipment(List.of("Backpack","Bedroll"));
+        characterJson.setEquipment(apiClient.getStartingEquipment(characterClass));
         return characterJson;
     }
     private int roll(){

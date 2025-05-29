@@ -64,13 +64,34 @@ public class DndApiClient {
         }
         return spells;
     }
-    /*public List<String>getStartingEquipment(String characterClass)
+    public EquipmentData getStartingEquipment(String characterClass)
     {
-        return webClient.get()
-                .uri("classes/{characterClass}", characterClass)
+        JsonNode json = webClient.get()
+                .uri("classes/{class}/starting-equipment",characterClass.toLowerCase())
                 .retrieve()
                 .bodyToMono(JsonNode.class)
-                .map()
-    }*/
+                .block();
+        if(json == null) return null;
+        List<EquipmentOption> proposed = new ArrayList<>();
+        JsonNode options = json.get("starting_equipment_options");
+        if(options != null&&options.isArray()) {
+            for(JsonNode opt:options){
+                String desc = opt.get("desc").asText();
+                List<String> choices = new ArrayList<>();
+                JsonNode innerOptions = opt.get("from").get("options");
+                for(JsonNode choice:innerOptions){
+                    JsonNode item = choice.get("of");
+                    if(item!=null&&item.has("name")){
+                        choices.add(item.get("name").asText());
+                    } else {
+                        choices.add("Unknown item or unsupported format");
+                    }
 
+                }
+                proposed.add(new EquipmentOption(desc,choices));
+            }
+        }
+        List<EquipmentItem> selected = List.of();
+        return new EquipmentData(proposed,selected);
+    }
 }
