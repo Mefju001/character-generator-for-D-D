@@ -10,4 +10,4 @@ Pozwala tworzyć postacie na podstawie wybranej rasy, klasy, poziomu oraz statys
 - Ustawianie poziomu postaci
 - Statystyki (STR, DEX, CON, INT, WIS, CHA)
 - Automatyczne pobieranie cech rasowych
-- (W planach) dodawanie ekwipunku i czarów
+- (W planach) Mix postaci half Orc i human, wizard + barbarian
