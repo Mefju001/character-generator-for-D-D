@@ -1,6 +1,7 @@
 package com.example.generator.Controller;
 
 import com.example.generator.Data.CharacterJson;
+import com.example.generator.Data.CharactersData;
 import com.example.generator.Service.CharacterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class CharacterController {
         return ResponseEntity.ok(characterService.generate(race,characterClass,level));
     }
     @GetMapping( "/generate")
-    public ResponseEntity<Map<Map<String,String>,List<String>>>generateCharacter()
+    public ResponseEntity<CharactersData>generateCharacter()
     {
         return ResponseEntity.ok(characterService.generateCharacter());
     }

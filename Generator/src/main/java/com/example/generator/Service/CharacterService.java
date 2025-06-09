@@ -2,6 +2,7 @@ package com.example.generator.Service;
 
 import com.example.generator.Data.CharacterJson;
 import com.example.generator.Api.DndApiClient;
+import com.example.generator.Data.CharactersData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +41,7 @@ public class CharacterService {
         characterJson.setEquipment(apiClient.getStartingEquipment(characterClass));
         return characterJson;
     }
-    public Map<Map<String,String>,List<String>>generateCharacter()
+    public CharactersData generateCharacter()
     {
         return apiClient.getClassesAndRacesDescription();
     }

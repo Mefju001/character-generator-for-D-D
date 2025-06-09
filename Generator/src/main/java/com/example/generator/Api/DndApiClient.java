@@ -1,9 +1,6 @@
 package com.example.generator.Api;
 
-import com.example.generator.Data.EquipmentData;
-import com.example.generator.Data.EquipmentItem;
-import com.example.generator.Data.EquipmentOption;
-import com.example.generator.Data.Spell;
+import com.example.generator.Data.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -138,7 +135,7 @@ public class DndApiClient {
         }
         return SubClasses;
     }
-    public Map<Map<String,String>,List<String>> getClassesAndRacesDescription()
+    public CharactersData getClassesAndRacesDescription()
     {
         JsonNode response = fetchJson("/races");
         Map<String,String> races = new HashMap<>();
@@ -176,9 +173,10 @@ public class DndApiClient {
                 classes.add(cls.get("name").asText());
             }
         }
-        Map<Map<String,String>,List<String>>result = new HashMap<>();
-        result.put(races,classes);
-        return result;
+        CharactersData charactersData = new CharactersData();
+        charactersData.setRaces(races);
+        charactersData.setClasses(classes);
+        return charactersData;
     }
     public JsonNode fetchJson(String endpoint) {
         try {
