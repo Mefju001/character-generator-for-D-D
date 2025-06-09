@@ -34,9 +34,14 @@ public class CharacterService {
         characterJson.setClassFeatures(apiClient.getClassFeatures(characterClass,level));
         int baseHP = 6 +(level-1)*(6+modifier(stats.get("CON")));
         characterJson.setHitPoints(baseHP);
+        characterJson.setSubClasses(apiClient.getSubClassesForClass(characterClass));
         characterJson.setSpellsKnown(apiClient.getSpellsByClassAndLevel(characterClass,level));
         characterJson.setEquipment(apiClient.getStartingEquipment(characterClass));
         return characterJson;
+    }
+    public Map<Map<String,String>,List<String>>generateCharacter()
+    {
+        return apiClient.getClassesAndRacesDescription();
     }
     private int roll(){
         return random.nextInt(20)+1;

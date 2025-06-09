@@ -11,6 +11,7 @@ public class CharacterJson {
     private List<String> racialTraits;
     private List<String>classFeatures;
     private List<Spell> spellsKnown;
+    private List<String>subClasses;
     private EquipmentData equipment;
     private int hitPoints;
 
@@ -21,6 +22,13 @@ public class CharacterJson {
         setRace(race);
         setCharacterClass(characterClass);
         setLevel(level);
+    }
+    public List<String> getSubClasses() {
+        return subClasses;
+    }
+
+    public void setSubClasses(List<String> subClasses) {
+        this.subClasses = subClasses;
     }
     public String getRace() {
         return race;

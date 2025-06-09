@@ -5,7 +5,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -112,4 +114,80 @@ public class DndApiClient {
         }
         return new EquipmentData(proposed,selected);
     }
+    public List<String>getSubClassesForClass(String className)
+    {
+        JsonNode json = webClient.get()
+                .uri("subclasses")
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .block();
+        if(json == null&&!json.has("results")){
+            return List.of();
+        }
+        List<String>SubClasses = new ArrayList<>();
+        for(JsonNode node:json.get("results"))
+        {
+            JsonNode classNode = node.get("class");
+            if(classNode!=null&&className.equalsIgnoreCase(classNode.get("index").asText())) {
+                SubClasses.add(node.get("name").asText());
+            }
+        }
+        return SubClasses;
+    }
+    public Map<Map<String,String>,List<String>> getClassesAndRacesDescription()
+    {
+        JsonNode response = fetchJson("/races");
+        Map<String,String> races = new HashMap<>();
+        if(response!=null&&response.has("results")){
+            for(JsonNode race:response.get("results"))
+            {
+                String name = race.get("name").asText();
+                String url = race.get("url").asText();
+                JsonNode descriptionNode = fetchJson("/races/"+name.toLowerCase());
+                if (descriptionNode == null) {
+                    races.put(name, "No description available.");
+                    continue;
+                }
+                StringBuilder desc = new StringBuilder();
+                if(descriptionNode.has("alignment"))
+                    desc.append("**Alignment**: ").append(descriptionNode.get("alignment").asText()).append("\n");
+                if (descriptionNode.has("age")) {
+                    desc.append("**Age**: ").append(descriptionNode.get("age").asText()).append("\n");
+                }
+                if (descriptionNode.has("size_description")) {
+                    desc.append("**Size**: ").append(descriptionNode.get("size_description").asText()).append("\n");
+                }
+                if (descriptionNode.has("language_desc")) {
+                    desc.append("**Languages**: ").append(descriptionNode.get("language_desc").asText()).append("\n");
+                }
+                races.put(name,desc.toString().trim());
+
+            }
+        }
+        response = fetchJson("/classes");
+        List<String> classes = new ArrayList<>();
+        if(response!=null&&response.has("results"))
+        {
+            for(JsonNode cls:response.get("results")){
+                classes.add(cls.get("name").asText());
+            }
+        }
+        Map<Map<String,String>,List<String>>result = new HashMap<>();
+        result.put(races,classes);
+        return result;
+    }
+    public JsonNode fetchJson(String endpoint) {
+        try {
+            return webClient.get()
+                    .uri(endpoint)
+                    .retrieve()
+                    .bodyToMono(JsonNode.class)
+                    .block();
+        } catch (Exception e) {
+            System.err.println("Failed to fetch from endpoint: " + endpoint);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }
