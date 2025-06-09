@@ -1,5 +1,9 @@
-package com.example.generator;
+package com.example.generator.Api;
 
+import com.example.generator.Data.EquipmentData;
+import com.example.generator.Data.EquipmentItem;
+import com.example.generator.Data.EquipmentOption;
+import com.example.generator.Data.Spell;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;

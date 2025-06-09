@@ -1,4 +1,4 @@
-package com.example.generator;
+package com.example.generator.Data;
 
 public class EquipmentItem {
     private String name;

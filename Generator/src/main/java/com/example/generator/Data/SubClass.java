@@ -1,8 +1,11 @@
-package com.example.generator;
+package com.example.generator.Data;
 
-public class ClassRef {
+import com.example.generator.Data.ClassRef;
+
+public class SubClass {
     private String index;
     private String name;
+    private ClassRef classRef;
 
     public String getIndex() {
         return index;
@@ -18,5 +21,13 @@ public class ClassRef {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ClassRef getClassRef() {
+        return classRef;
+    }
+
+    public void setClassRef(ClassRef classRef) {
+        this.classRef = classRef;
     }
 }

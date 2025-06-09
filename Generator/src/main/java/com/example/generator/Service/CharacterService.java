@@ -1,12 +1,13 @@
-package com.example.generator;
+package com.example.generator.Service;
 
+import com.example.generator.Data.CharacterJson;
+import com.example.generator.Api.DndApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 public class CharacterService {
@@ -17,7 +18,7 @@ public class CharacterService {
     {
         this.apiClient=dndApiClient;
     }
-    public CharacterJson generate(String race,String characterClass,int level)
+    public CharacterJson generate(String race, String characterClass, int level)
     {
         CharacterJson characterJson = new CharacterJson();
         characterJson.setgenerate(race,characterClass,level);

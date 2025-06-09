@@ -1,7 +1,8 @@
-package com.example.generator;
+package com.example.generator.Controller;
 
+import com.example.generator.Data.CharacterJson;
+import com.example.generator.Service.CharacterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

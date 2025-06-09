@@ -1,4 +1,4 @@
-package com.example.generator;
+package com.example.generator.Data;
 
 public class Spell {
     private String name;
