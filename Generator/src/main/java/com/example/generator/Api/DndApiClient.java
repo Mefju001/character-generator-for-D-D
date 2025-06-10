@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -25,16 +22,38 @@ public class DndApiClient {
                         .collect(Collectors.toList()))
                 .block();
     }
-    public List<String>getClassFeatures(String characterClass,int level)
+    public Map<Integer,List<String>>getClassFeatures(String characterClass)
     {
-        return webClient.get()
+        Map<Integer,List<String>>featuresByLevel = new HashMap<>();
+
+        int maxLevel = 20;
+        for(int level=1;level<maxLevel;level++){
+        JsonNode jsonNode = webClient.get()
+                .uri("classes/{characterClass}/levels/{level}", characterClass.toLowerCase(), level)
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .block();
+        if (jsonNode == null && !jsonNode.has("features")) {
+            featuresByLevel.put(level, Collections.emptyList());
+        }
+        List<String>features = new ArrayList<>();
+        for (JsonNode node : jsonNode.get("features")) {
+            String name = node.get("name").asText();
+            features.add(name);
+        }
+        featuresByLevel.put(level,features);
+    }
+        return featuresByLevel;
+
+
+        /*return webClient.get()
                 .uri("classes/{characterClass}/levels/{level}",characterClass.toLowerCase(), level)
                 .retrieve()
                 .bodyToMono(JsonNode.class)
                 .map(json->StreamSupport.stream(json.get("features").spliterator(),false)
                         .map(node->node.get("name").asText())
                         .collect(Collectors.toList()))
-                .block();
+                .block();*/
     }
     public List<Spell>getSpellsByClassAndLevel(String characterClass, int level)
     {
@@ -117,18 +136,20 @@ public class DndApiClient {
     }
     public List<String>getSubClassesForClass(String className)
     {
-        JsonNode json = webClient.get()
-                .uri("subclasses")
-                .retrieve()
-                .bodyToMono(JsonNode.class)
-                .block();
+        JsonNode json = fetchJson("subclasses");
         if(json == null&&!json.has("results")){
             return List.of();
         }
         List<String>SubClasses = new ArrayList<>();
         for(JsonNode node:json.get("results"))
         {
-            JsonNode classNode = node.get("class");
+            String name = node.get("index").asText();
+            json =fetchJson("subclasses/"+name);
+            if(json==null)
+            {
+                continue;
+            }
+            JsonNode classNode = json.get("class");
             if(classNode!=null&&className.equalsIgnoreCase(classNode.get("index").asText())) {
                 SubClasses.add(node.get("name").asText());
             }

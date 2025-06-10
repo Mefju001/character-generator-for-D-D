@@ -2,6 +2,8 @@ package com.example.generator.Controller;
 
 import com.example.generator.Data.CharacterJson;
 import com.example.generator.Data.CharactersData;
+import com.example.generator.Data.EquipmentData;
+import com.example.generator.Data.Spell;
 import com.example.generator.Service.CharacterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,5 +32,15 @@ public class CharacterController {
     public ResponseEntity<CharactersData>generateCharacter()
     {
         return ResponseEntity.ok(characterService.generateCharacter());
+    }
+    @GetMapping( "/startingEquipment/{characterClass}")
+    public ResponseEntity<EquipmentData>generateStartingEquipment(@PathVariable String characterClass)
+    {
+        return ResponseEntity.ok(characterService.generateStartingEquipment(characterClass));
+    }
+    @GetMapping( "/class/{characterClass}/level/{level}/spells")
+    public ResponseEntity<List<Spell>>generateKnownSpells(@PathVariable String characterClass, @PathVariable int level)
+    {
+        return ResponseEntity.ok(characterService.generateKnownSpells(characterClass,level));
     }
 }

@@ -3,6 +3,8 @@ package com.example.generator.Service;
 import com.example.generator.Data.CharacterJson;
 import com.example.generator.Api.DndApiClient;
 import com.example.generator.Data.CharactersData;
+import com.example.generator.Data.EquipmentData;
+import com.example.generator.Data.Spell;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,17 +35,23 @@ public class CharacterService {
         );
         characterJson.setStats(stats);
         characterJson.setRacialTraits(apiClient.getRaceTraits(race));
-        characterJson.setClassFeatures(apiClient.getClassFeatures(characterClass,level));
+        characterJson.setClassFeatures(apiClient.getClassFeatures(characterClass));
         int baseHP = 6 +(level-1)*(6+modifier(stats.get("CON")));
         characterJson.setHitPoints(baseHP);
         characterJson.setSubClasses(apiClient.getSubClassesForClass(characterClass));
-        characterJson.setSpellsKnown(apiClient.getSpellsByClassAndLevel(characterClass,level));
-        characterJson.setEquipment(apiClient.getStartingEquipment(characterClass));
         return characterJson;
     }
     public CharactersData generateCharacter()
     {
         return apiClient.getClassesAndRacesDescription();
+    }
+    public EquipmentData generateStartingEquipment(String characterclass)
+    {
+        return apiClient.getStartingEquipment(characterclass);
+    }
+    public List<Spell> generateKnownSpells(String characterclass,int level)
+    {
+        return apiClient.getSpellsByClassAndLevel(characterclass,level);
     }
     private int roll(){
         return random.nextInt(20)+1;

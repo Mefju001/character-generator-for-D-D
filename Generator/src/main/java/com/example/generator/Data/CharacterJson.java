@@ -9,7 +9,7 @@ public class CharacterJson {
     private int level;
     private Map<String,Integer>stats;
     private List<String> racialTraits;
-    private List<String>classFeatures;
+    private Map<Integer,List<String>>classFeatures;
     private List<Spell> spellsKnown;
     private List<String>subClasses;
     private EquipmentData equipment;
@@ -70,11 +70,11 @@ public class CharacterJson {
         this.racialTraits = racialTraits;
     }
 
-    public List<String> getClassFeatures() {
+    public Map<Integer,List<String>> getClassFeatures() {
         return classFeatures;
     }
 
-    public void setClassFeatures(List<String> classFeatures) {
+    public void setClassFeatures(Map<Integer,List<String>> classFeatures) {
         this.classFeatures = classFeatures;
     }
 
