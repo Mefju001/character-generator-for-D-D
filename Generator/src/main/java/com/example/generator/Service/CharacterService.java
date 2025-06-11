@@ -8,12 +8,11 @@ import com.example.generator.Data.Spell;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class CharacterService {
+
     private final DndApiClient apiClient;
     private final Random random = new Random();
     @Autowired
@@ -25,14 +24,34 @@ public class CharacterService {
     {
         CharacterJson characterJson = new CharacterJson();
         characterJson.setgenerate(race,characterClass,level);
-        Map<String,Integer>stats = Map.of(
-                "STR", roll(),
-                "DEX", roll(),
-                "CON", roll(),
-                "INT", roll(),
-                "WIS", roll(),
-                "CHA", roll()
+        List<Integer>rolls = new ArrayList<>();
+        for(int i=0;i<6;i++)
+            rolls.add(roll());
+        sortmal(rolls);
+        Map<String,List<String>>primaryAbilities = Map.ofEntries(
+                Map.entry("barbarian", List.of("STR", "CON")),
+                Map.entry("bard", List.of("CHA", "DEX")),
+                Map.entry("cleric", List.of("WIS", "STR")),
+                Map.entry("druid", List.of("WIS", "CON")),
+                Map.entry("fighter", List.of("STR", "DEX", "CON")),
+                Map.entry("monk", List.of("DEX", "WIS")),
+                Map.entry("paladin", List.of("STR", "CHA")),
+                Map.entry("ranger", List.of("DEX", "WIS")),
+                Map.entry("rogue", List.of("DEX", "INT", "CHA")),
+                Map.entry("sorcerer", List.of("CHA", "CON")),
+                Map.entry("warlock", List.of("CHA", "CON")),
+                Map.entry("wizard", List.of("INT", "DEX"))
         );
+        List<String>abilities = new ArrayList<>(List.of("STR", "DEX", "CON", "INT", "WIS", "CHA"));
+        List<String> orderedAbilities = new ArrayList<>();
+        List<String>primaries = primaryAbilities.getOrDefault(characterClass.toLowerCase(),List.of());
+        orderedAbilities.addAll(primaries);
+        for(String a:abilities)
+            if(!orderedAbilities.contains(a))
+                orderedAbilities.add(a);
+        Map<String,Integer> stats = new HashMap<>();
+        for(int i = 0;i<6;i++)
+            stats.put(orderedAbilities.get(i),rolls.get(i));
         characterJson.setStats(stats);
         characterJson.setRacialTraits(apiClient.getRaceTraits(race));
         characterJson.setClassFeatures(apiClient.getClassFeatures(characterClass));
@@ -53,8 +72,36 @@ public class CharacterService {
     {
         return apiClient.getSpellsByClassAndLevel(characterclass,level);
     }
-    private int roll(){
-        return random.nextInt(20)+1;
+    private int roll() {
+        List<Integer> rolls = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            rolls.add(random.nextInt(6) + 1);
+        }
+        sort(rolls);
+        return rolls.get(1) + rolls.get(2) + rolls.get(3);
+    }
+
+    private void sort(List<Integer> rolls) {
+        for (int i = 0; i < rolls.size() - 1; i++) {
+            for (int j = 0; j < rolls.size() - i - 1; j++) {
+                if (rolls.get(j) > rolls.get(j + 1)) {
+                    int temp = rolls.get(j);
+                    rolls.set(j, rolls.get(j + 1));
+                    rolls.set(j + 1, temp);
+                }
+            }
+        }
+    }
+    private void sortmal(List<Integer> rolls) {
+        for (int i = 0; i < rolls.size() - 1; i++) {
+            for (int j = 0; j < rolls.size() - i - 1; j++) {
+                if (rolls.get(j) < rolls.get(j + 1)) {
+                    int temp = rolls.get(j);
+                    rolls.set(j, rolls.get(j + 1));
+                    rolls.set(j + 1, temp);
+                }
+            }
+        }
     }
     private int modifier(int stat) {
         return (stat - 10) / 2;
