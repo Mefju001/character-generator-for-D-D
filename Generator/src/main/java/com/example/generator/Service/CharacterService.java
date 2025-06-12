@@ -64,6 +64,23 @@ public class CharacterService {
     {
         return apiClient.getClassesAndRacesDescription();
     }
+    public Map<String,String> generateAbility()
+    {
+        return apiClient.getAbility();
+    }
+    public String generateAbilityByName(String name)
+    {
+        return apiClient.getAbilityByName(name);
+    }
+    public String generateFeaturesByName(String name){
+        return apiClient.getFeaturesByName(name);
+    }
+    public String generateSubClassesByName(String name){
+        return apiClient.getSubClassesByName(name);
+    }
+    public String generateSpellByName(String name){
+        return apiClient.getSpellByName(name);
+    }
     public EquipmentData generateStartingEquipment(String characterclass)
     {
         return apiClient.getStartingEquipment(characterclass);

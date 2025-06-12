@@ -44,16 +44,6 @@ public class DndApiClient {
         featuresByLevel.put(level,features);
     }
         return featuresByLevel;
-
-
-        /*return webClient.get()
-                .uri("classes/{characterClass}/levels/{level}",characterClass.toLowerCase(), level)
-                .retrieve()
-                .bodyToMono(JsonNode.class)
-                .map(json->StreamSupport.stream(json.get("features").spliterator(),false)
-                        .map(node->node.get("name").asText())
-                        .collect(Collectors.toList()))
-                .block();*/
     }
     public List<Spell>getSpellsByClassAndLevel(String characterClass, int level)
     {
@@ -155,6 +145,109 @@ public class DndApiClient {
             }
         }
         return SubClasses;
+    }
+    public Map<String,String>getAbility()
+    {
+        JsonNode json = fetchJson("ability-scores");
+        if(json == null&&!json.has("results")){
+            return Map.of();
+        }
+        Map<String,String>ability = new HashMap<>();
+        for(JsonNode node:json.get("results"))
+        {
+            String name = node.get("index").asText();
+            json =fetchJson("ability-scores/"+name);
+            if(json==null)
+            {
+                continue;
+            }
+            String fullname = json.get("full_name").asText();
+            String desc = StreamSupport.stream(json.get("desc").spliterator(),false)
+                    .map(JsonNode::asText)
+                    .collect(Collectors.joining(" "));
+            ability.put(fullname,desc);
+        }
+        return ability;
+    }
+    public String getAbilityByName(String abilityName) {
+        JsonNode json = fetchJson("ability-scores");
+        if (json == null || !json.has("results")) {
+            return " ";
+        }
+
+        for (JsonNode node : json.get("results")) {
+            String name = node.get("index").asText();
+            JsonNode abilityJson = fetchJson("ability-scores/" + name);
+            if (abilityJson == null) {
+                continue;
+            }
+
+            String fullName = abilityJson.get("full_name").asText();
+            if (fullName.equalsIgnoreCase(abilityName)) {
+                return StreamSupport.stream(abilityJson.get("desc").spliterator(), false)
+                        .map(JsonNode::asText)
+                        .collect(Collectors.joining(" "));
+            }
+        }
+
+        return "Ability not found.";
+    }
+    public String getFeaturesByName(String featuresName)
+    {
+        JsonNode json = fetchJson("features");
+        if(json == null||!json.has("results")) {
+            return " ";
+        }
+        for(JsonNode results:json.get("results")) {
+            String index = results.get("index").asText();
+            JsonNode descriptionNode = fetchJson("features/" + index);
+            if (descriptionNode == null) {
+                continue;
+            }
+            String name = descriptionNode.get("index").asText();
+            if (name.equalsIgnoreCase(featuresName)) {
+                return StreamSupport.stream(descriptionNode.get("desc").spliterator(),false)
+                        .map(JsonNode::asText)
+                        .collect(Collectors.joining(" "));
+            }
+        }
+        return "Features not found";
+    }
+    public String getSubClassesByName(String subClassesName){
+        JsonNode node = fetchJson("subclasses");
+        if(node == null||!node.has("results"))
+            return " ";
+        for(JsonNode results:node.get("results")){
+            String index = results.get("index").asText();
+            JsonNode desc = fetchJson("subclasses/"+index);
+            if(desc == null)
+                continue;
+            String name = desc.get("index").asText();
+            if(name.equalsIgnoreCase(subClassesName)){
+                return StreamSupport.stream(desc.get("desc").spliterator(),false)
+                        .map(JsonNode::asText)
+                        .collect(Collectors.joining(" "));
+            }
+        }
+        return "SubClasses not found";
+    }
+    public String getSpellByName(String spellName){
+        JsonNode node = fetchJson("spells");
+        if(node == null||!node.has("results"))
+            return " ";
+        for(JsonNode results:node.get("results")){
+            String index = results.get("index").asText();
+            JsonNode desc = fetchJson("spells/"+index);
+            if(desc == null)
+                continue;
+            String name = desc.get("index").asText();
+            if(name.equalsIgnoreCase(spellName)){
+                return StreamSupport.stream(desc.get("desc").spliterator(),false)
+                        .map(JsonNode::asText)
+                        .collect(Collectors.joining(" "));
+            }
+        }
+        return "Spell not found";
     }
     public CharactersData getClassesAndRacesDescription()
     {

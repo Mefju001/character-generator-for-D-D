@@ -43,4 +43,29 @@ public class CharacterController {
     {
         return ResponseEntity.ok(characterService.generateKnownSpells(characterClass,level));
     }
+    @GetMapping( "/Ability")
+    public ResponseEntity<Map<String,String>>getAbility()
+    {
+        return ResponseEntity.ok(characterService.generateAbility());
+    }
+    @GetMapping( "/Ability/{name}")
+    public ResponseEntity<String>getAbilityByName(@PathVariable String name)
+    {
+        return ResponseEntity.ok(characterService.generateAbilityByName(name));
+    }
+    @GetMapping( "/Features/{name}")
+    public ResponseEntity<String>getFeaturesByName(@PathVariable String name)
+    {
+        return ResponseEntity.ok(characterService.generateFeaturesByName(name));
+    }
+    @GetMapping( "/SubClasses/{name}")
+    public ResponseEntity<String>getSubClassesByName(@PathVariable String name)
+    {
+        return ResponseEntity.ok(characterService.generateSubClassesByName(name));
+    }
+    @GetMapping( "/Spell/{name}")
+    public ResponseEntity<String>getSpellByName(@PathVariable String name)
+    {
+        return ResponseEntity.ok(characterService.generateSpellByName(name));
+    }
 }
